@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navigation } from "./components/Navigation";
 import { FileUpload } from "./components/FileUpload";
 import { LoadingState } from "./components/LoadingState";
 import { ResultsPanel } from "./components/ResultsPanel";
 import { Footer } from "./components/Footer";
 import { ImageWithFallback } from "./components/figma/ImageWithFallback";
+import AboutPage from "./pages/About";
+import PricingPage from "./pages/Pricing";
+import ContactPage from "./pages/Contact";
+import Chatbot from "./components/Chatbot";
 
 type AppState = 'upload' | 'loading' | 'results';
 
@@ -12,6 +16,13 @@ export default function App() {
   const [appState, setAppState] = useState<AppState>('upload');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [route, setRoute] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const onPop = () => setRoute(window.location.pathname);
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
@@ -35,6 +46,33 @@ export default function App() {
     setSelectedFile(null);
     setLoadingProgress(0);
   };
+
+  if (route === '/about') {
+    return (
+      <div className="min-h-screen bg-background">
+        <AboutPage />
+        <Chatbot />
+      </div>
+    );
+  }
+
+  if (route === '/pricing') {
+    return (
+      <div className="min-h-screen bg-background">
+        <PricingPage />
+        <Chatbot />
+      </div>
+    );
+  }
+
+  if (route === '/contact') {
+    return (
+      <div className="min-h-screen bg-background">
+        <ContactPage />
+        <Chatbot />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
